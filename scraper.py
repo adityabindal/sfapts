@@ -82,6 +82,7 @@ def getListings(url,ticker):
 		pass
 	elif ticker<10:
 		print response.reason
+		print response.content
 		ticker=ticker+1
 		pass
 	else:
