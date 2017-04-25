@@ -55,11 +55,6 @@ class apartment(object):
 		self.postingDate=obj['PostedDate']
 		self.hashedTitle=hash(self.title)
 		self.timeStamp=time.strftime('%Y-%m-%d %H:%M:%S')
-	def getAptDescription(self):
-		r=BeautifulSoup(requests.get("http:%s" % self.url).content)
-		t=r.find(id='postingbody')
-		self.description=t.text
-
 	def saveToDB(self):
 		scraperwiki.sqlite.save(
 			unique_keys=['postingID','hashedTitle','timeStamp'],
@@ -73,8 +68,7 @@ class apartment(object):
 					'postingID':self.postingID,
 					'postingDate':self.postingDate,
 					'hashedTitle':self.hashedTitle,
-					'timeStamp':self.timeStamp,
-					'description':self.description
+					'timeStamp':self.timeStamp
 				})
 
 ## Recursive function that combines getResults getListings
@@ -94,10 +88,9 @@ def getListings(url,ticker):
 		if 'GeoCluster' in i.keys():
 			getListings(base_url+i['url'],ticker)			
 		else:
+			print i
 			# Create apartment class instance from object
 			unit=apartment(i)
-			# Get Apartment Description
-			unit.getAptDescription()
 			# Save to SQLDB
 			unit.saveToDB()
 
