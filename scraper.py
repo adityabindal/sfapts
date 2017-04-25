@@ -73,7 +73,11 @@ class apartment(object):
 
 ## Recursive function that combines getResults getListings
 def getListings(url,ticker):
-	response=requests.get(url)
+	sess=requests.Session()
+	sess.headers['User-Agent']='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36'
+	adapter=requests.adapters.HTTPAdapter(max_retries=100)
+	sess.mount('http://',adapter)	
+	response=sess.get(url)
 	if response.ok:
 		pass
 	elif ticker<10:
@@ -88,7 +92,7 @@ def getListings(url,ticker):
 		if 'GeoCluster' in i.keys():
 			getListings(base_url+i['url'],ticker)			
 		else:
-			print i
+#			print i
 			# Create apartment class instance from object
 			unit=apartment(i)
 			# Save to SQLDB
