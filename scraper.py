@@ -35,7 +35,7 @@ import os
 from bs4 import BeautifulSoup
 
 # Environment Variables
-base_url='https://sfbay.craigslist.org/jsonsearch/apa/sby/?'
+base_url='https://sfbay.craigslist.org/jsonsearch/apa/sfc/?'
 start_url='s=120&map=1'
 ticker=0
 os.environ['TZ']='US/Central'
@@ -73,7 +73,7 @@ class apartment(object):
 
 ## Recursive function that combines getResults getListings
 def getListings(url,ticker):
-	time.sleep(10)
+	time.sleep(1)
 	sess=requests.Session()
 	sess.headers['User-Agent']='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36'
 	adapter=requests.adapters.HTTPAdapter(max_retries=100)
