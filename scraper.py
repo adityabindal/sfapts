@@ -32,6 +32,7 @@ import time
 from random import randint
 import json
 import os
+import geojson
 from bs4 import BeautifulSoup
 
 # Environment Variables
@@ -55,6 +56,7 @@ class apartment(object):
 		self.postingDate=obj['PostedDate']
 		self.hashedTitle=hash(self.title)
 		self.timeStamp=time.strftime('%Y-%m-%d %H:%M:%S')
+		self.neighborhood=get_neighborhood_for_point(self.latitude,self.longitude,poly)
 	def saveToDB(self):
 		scraperwiki.sqlite.save(
 			unique_keys=['postingID','hashedTitle','timeStamp'],
@@ -68,7 +70,8 @@ class apartment(object):
 					'postingID':self.postingID,
 					'postingDate':self.postingDate,
 					'hashedTitle':self.hashedTitle,
-					'timeStamp':self.timeStamp
+					'timeStamp':self.timeStamp,
+					'neighborhood':self.neighborhood
 				})
 
 ## Recursive function that combines getResults getListings
@@ -100,4 +103,36 @@ def getListings(url,ticker):
 			# Save to SQLDB
 			unit.saveToDB()
 
+def point_inside_polygon(x,y,poly):
+    """Return True if the point described by x, y is inside of the polygon
+    described by the list of points [(x0, y0), (x1, y1), ... (xn, yn)] in
+    ``poly``
+
+    Code from http://www.ariel.com.au/a/python-point-int-poly.html which
+    in turn was adapted from C code found at
+    http://local.wasp.uwa.edu.au/~pbourke/geometry/insidepoly/
+    """
+    n = len(poly)
+    inside =False
+
+    p1x,p1y = poly[0]
+    for i in range(n+1):
+        p2x,p2y = poly[i % n]
+        if y > min(p1y,p2y):
+            if y <= max(p1y,p2y):
+                if x <= max(p1x,p2x):
+                    if p1y != p2y:
+                        xinters = (y-p1y)*(p2x-p1x)/(p2y-p1y)+p1x
+                    if p1x == p2x or x <= xinters:
+                        inside = not inside
+        p1x,p1y = p2x,p2y
+    return inside
+
+def get_neighborhood_for_point(lat, lng, commareas):
+    for neighborhood in commareas:
+        if point_inside_polygon(lng, lat, neighborhood['geometry']['coordinates'][0][0]):
+            return neighborhood['properties']['name']
+
+
+poly=geojson.loads(open('SF Find Neighborhoods.geojson').read())['features']
 getListings(base_url+start_url,ticker)
