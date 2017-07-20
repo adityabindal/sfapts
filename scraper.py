@@ -134,6 +134,6 @@ def get_neighborhood_for_point(lat, lng, commareas):
             return neighborhood['properties']['name']
 
 
-if int(time.strftime(%d))%3==0:
+if int(time.strftime('%d'))%3==0:
 	poly=geojson.loads(open('SF Find Neighborhoods.geojson').read())['features']
 	getListings(base_url+start_url,ticker)
