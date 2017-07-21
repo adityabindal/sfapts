@@ -109,7 +109,7 @@ def getListings(url,ticker):
 			# Create apartment class instance from object
 			unit=apartment(i)
 			if hashList.rfind(unit.hashedTitle)>0:
-				updateRecord()
+				unit.updateRecord()
 			else:
 				unit.saveToDB()
 
