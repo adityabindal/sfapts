@@ -59,8 +59,7 @@ class apartment(object):
 		self.timeStamp=time.strftime('%Y-%m-%d %H:%M:%S')
 		self.neighborhood=get_neighborhood_for_point(self.latitude,self.longitude,poly)
 		self.hashedTitle=hashlib.md5(str((self.title).encode('utf-8'))+str(self.price)+str(self.neighborhood)).hexdigest()	
-		days=datetime.datetime.now()-datetime.datetime.fromtimestamp(self.postingDate)
-		self.daysSince=days.days
+		self.daysSince=(datetime.datetime.now()-datetime.datetime.fromtimestamp(self.postingDate)).days
 	def saveToDB(self):
 		scraperwiki.sqlite.save(
 			unique_keys=['postingID','hashedTitle','timeStamp'],
@@ -79,7 +78,7 @@ class apartment(object):
 					'daysSince':self.daysSince
 				})
 	def updateRecord(self):
-		scraperwiki.sqlite.execute("UPDATE data set daysSince=self.daysSince where postingID==self.postingID")
+		scraperwiki.sqlite.execute("UPDATE data SET daysSince=self.daysSince WHERE postingID==self.postingID")
 		scraperwiki.sqlite.commit_transactions()
 
 ## Recursive function that combines getResults getListings
