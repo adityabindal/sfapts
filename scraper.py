@@ -77,8 +77,8 @@ class apartment(object):
 					'neighborhood':self.neighborhood,
 					'daysSince':self.daysSince
 				})
-	def updateRecord(self):
-		scraperwiki.sqlite.execute("UPDATE data SET daysSince=self.daysSince WHERE postingID==self.postingID")
+	def updateRecord(self,days):
+		scraperwiki.sqlite.execute("UPDATE data SET daysSince=days WHERE postingID==self.postingID")
 		scraperwiki.sqlite.commit_transactions()
 
 ## Recursive function that combines getResults getListings
@@ -108,7 +108,7 @@ def getListings(url,ticker):
 			# Create apartment class instance from object
 			unit=apartment(i)
 			if hashList.rfind(unit.hashedTitle)>0:
-				unit.updateRecord()
+				unit.updateRecord(unit.daysSince)
 			else:
 				unit.saveToDB()
 
