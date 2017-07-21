@@ -146,7 +146,7 @@ def get_neighborhood_for_point(lat, lng, commareas):
 
 if int(time.strftime('%d'))%1==0:
 	morph_api_url = "https://api.morph.io/abgtrevize/sfapts/data.json"
-	morph_api_key = ENV['MORPH_API_KEY']
+	morph_api_key = os.environ['MORPH_API_KEY']
 	hashList = requests.get(morph_api_url, params={
 	  'key': morph_api_key,
 	  'query': "select distinct hashedTitle from data;"
