@@ -57,7 +57,7 @@ class apartment(object):
 		self.postingDate=obj['PostedDate']
 		self.timeStamp=time.strftime('%Y-%m-%d %H:%M:%S')
 		self.neighborhood=get_neighborhood_for_point(self.latitude,self.longitude,poly)
-		self.hashedTitle=hashlib.md5(self.title+self.price+self.neighborhood+self.url).hexdigest()	
+		self.hashedTitle=hashlib.md5(str(self.title)+str(self.price)+str(self.neighborhood)+str(self.url)).hexdigest()	
 	def saveToDB(self):
 		scraperwiki.sqlite.save(
 			unique_keys=['postingID','hashedTitle','timeStamp'],
