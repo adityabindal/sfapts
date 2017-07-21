@@ -62,7 +62,7 @@ class apartment(object):
 		self.daysSince=(datetime.datetime.now()-datetime.datetime.fromtimestamp(self.postingDate)).days
 	def saveToDB(self):
 		scraperwiki.sqlite.save(
-			unique_keys=['hasedhTitle'],
+			unique_keys=['hashedTitle'],
 			data={
 					'bedrooms':self.bedrooms,
 					'price':self.price,
