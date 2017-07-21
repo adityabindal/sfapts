@@ -58,7 +58,7 @@ class apartment(object):
 		self.postingDate=obj['PostedDate']
 		self.timeStamp=time.strftime('%Y-%m-%d %H:%M:%S')
 		self.neighborhood=get_neighborhood_for_point(self.latitude,self.longitude,poly)
-		self.hashedTitle=hashlib.md5((str(self.title)+str(self.price)+str(self.neighborhood)).encode('utf-8')).hexdigest()	
+		self.hashedTitle=hashlib.sha256((str(self.title)+str(self.price)+str(self.neighborhood)).encode('utf-8')).hexdigest()	
 		self.daysSince=(datetime.datetime.now()-datetime.datetime.fromtimestamp(self.postingDate)).days
 	def saveToDB(self):
 		scraperwiki.sqlite.save(
