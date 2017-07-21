@@ -59,7 +59,8 @@ class apartment(object):
 		self.timeStamp=time.strftime('%Y-%m-%d %H:%M:%S')
 		self.neighborhood=get_neighborhood_for_point(self.latitude,self.longitude,poly)
 		self.hashedTitle=hashlib.md5(str((self.title).encode('utf-8'))+str(self.price)+str(self.neighborhood)).hexdigest()	
-		self.daysSince=(datetime.datetime.now()-datetime.datetime.fromtimestamp(self.postingDate)).days
+		days=datetime.datetime.now()-datetime.datetime.fromtimestamp(self.postingDate)
+		self.daysSince=days.days
 	def saveToDB(self):
 		scraperwiki.sqlite.save(
 			unique_keys=['postingID','hashedTitle','timeStamp'],
@@ -77,6 +78,9 @@ class apartment(object):
 					'neighborhood':self.neighborhood,
 					'daysSince':self.daysSince
 				})
+	def updateRecord(self):
+		scraperwiki.sqlite.execute("UPDATE data set daysSince=self.daysSince where postingID==self.postingID")
+		scraperwiki.sqlite.commit_transactions
 
 ## Recursive function that combines getResults getListings
 def getListings(url,ticker):
@@ -103,15 +107,11 @@ def getListings(url,ticker):
 		else:
 #			print i
 			# Create apartment class instance from object
-			print i
 			unit=apartment(i)
-			# Save to SQLDB
-			# If you find it then update with today minus the day posted. Else add new row.
-#			if unit.hashedTitle in hashList:
-#				unit.daysSince=
-#			else:
-#				unit.saveToDB()
-			unit.saveToDB()
+			if hashList.rfind(unit.hashedTitle)>0:
+				updateRecord()
+			else:
+				unit.saveToDB()
 
 def point_inside_polygon(x,y,poly):
     """Return True if the point described by x, y is inside of the polygon
@@ -145,10 +145,11 @@ def get_neighborhood_for_point(lat, lng, commareas):
 
 
 if int(time.strftime('%d'))%1==0:
-	# Generate hash list
-#	conn=sqlite3.connect('./_sfapts/20170720.sqlite', timeout=10000.0)
-#	c=conn.cursor()
-#	hashList=c.execute('''SELECT distinct hashedTitle from data''').fetchall()
-	# (I was trying to create the ability to )
+	morph_api_url = "https://api.morph.io/abgtrevize/sfapts/data.json"
+	morph_api_key = ENV['MORPH_API_KEY']
+	hashList = requests.get(morph_api_url, params={
+	  'key': morph_api_key,
+	  'query': "select distinct hashedTitle from data;"
+	}).content
 	poly=geojson.loads(open('SF Find Neighborhoods.geojson').read())['features']
 	getListings(base_url+start_url,ticker)
