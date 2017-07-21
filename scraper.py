@@ -103,6 +103,7 @@ def getListings(url,ticker):
 		else:
 #			print i
 			# Create apartment class instance from object
+			print i
 			unit=apartment(i)
 			# Save to SQLDB
 			# If you find it then update with today minus the day posted. Else add new row.
