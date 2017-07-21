@@ -62,7 +62,7 @@ class apartment(object):
 		self.daysSince=(datetime.datetime.now()-datetime.datetime.fromtimestamp(self.postingDate)).days
 	def saveToDB(self):
 		scraperwiki.sqlite.save(
-			unique_keys=['postingID','hashedTitle','timeStamp'],
+			unique_keys=['hasedhTitle'],
 			data={
 					'bedrooms':self.bedrooms,
 					'price':self.price,
@@ -75,11 +75,8 @@ class apartment(object):
 					'hashedTitle':self.hashedTitle,
 					'timeStamp':self.timeStamp,
 					'neighborhood':self.neighborhood,
-					'daysSince':self.daysSince
+					'daysSince':99
 				})
-	def updateRecord(self):
-		scraperwiki.sqlite.execute('''UPDATE data SET daysSince=self.daysSince WHERE postingID==self.postingID''')
-		scraperwiki.sqlite.commit_transactions()
 
 ## Recursive function that combines getResults getListings
 def getListings(url,ticker):
@@ -106,11 +103,7 @@ def getListings(url,ticker):
 		else:
 #			print i
 			# Create apartment class instance from object
-			unit=apartment(i)
-			if hashList.rfind(unit.hashedTitle)>0:
-				unit.updateRecord()
-			else:
-				unit.saveToDB()
+			unit.saveToDB()
 
 def point_inside_polygon(x,y,poly):
     """Return True if the point described by x, y is inside of the polygon
@@ -144,11 +137,5 @@ def get_neighborhood_for_point(lat, lng, commareas):
 
 
 if int(time.strftime('%d'))%1==0:
-	morph_api_url = "https://api.morph.io/abgtrevize/sfapts/data.json"
-	morph_api_key = os.environ['MORPH_API_KEY']
-	hashList = requests.get(morph_api_url, params={
-	  'key': morph_api_key,
-	  'query': "select distinct hashedTitle from data;"
-	}).content
 	poly=geojson.loads(open('SF Find Neighborhoods.geojson').read())['features']
 	getListings(base_url+start_url,ticker)
