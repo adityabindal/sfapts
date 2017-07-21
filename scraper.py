@@ -103,6 +103,7 @@ def getListings(url,ticker):
 		else:
 #			print i
 			# Create apartment class instance from object
+			unit=apartment(i)
 			unit.saveToDB()
 
 def point_inside_polygon(x,y,poly):
