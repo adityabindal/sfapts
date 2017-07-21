@@ -80,7 +80,7 @@ class apartment(object):
 				})
 	def updateRecord(self):
 		scraperwiki.sqlite.execute("UPDATE data set daysSince=self.daysSince where postingID==self.postingID")
-		scraperwiki.sqlite.commit_transactions
+		scraperwiki.sqlite.commit_transactions()
 
 ## Recursive function that combines getResults getListings
 def getListings(url,ticker):
