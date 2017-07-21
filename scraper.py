@@ -75,7 +75,7 @@ class apartment(object):
 					'hashedTitle':self.hashedTitle,
 					'timeStamp':self.timeStamp,
 					'neighborhood':self.neighborhood,
-					'daysSince':99
+					'daysSince':self.daysSince
 				})
 
 ## Recursive function that combines getResults getListings
