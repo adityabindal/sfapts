@@ -34,6 +34,7 @@ from random import randint
 import json
 import os
 import geojson
+import datetime
 from bs4 import BeautifulSoup
 
 # Environment Variables
@@ -57,7 +58,8 @@ class apartment(object):
 		self.postingDate=obj['PostedDate']
 		self.timeStamp=time.strftime('%Y-%m-%d %H:%M:%S')
 		self.neighborhood=get_neighborhood_for_point(self.latitude,self.longitude,poly)
-		self.hashedTitle=hashlib.md5(str(self.title)+str(self.price)+str(self.neighborhood)+str(self.url)).hexdigest()	
+		self.hashedTitle=hashlib.md5(str(self.title)+str(self.price)+str(self.neighborhood)).hexdigest()	
+		self.daysSince=(datetime.datetime.now()-datetime.datetime.fromtimestamp(self.postingDate)).days
 	def saveToDB(self):
 		scraperwiki.sqlite.save(
 			unique_keys=['postingID','hashedTitle','timeStamp'],
@@ -72,7 +74,8 @@ class apartment(object):
 					'postingDate':self.postingDate,
 					'hashedTitle':self.hashedTitle,
 					'timeStamp':self.timeStamp,
-					'neighborhood':self.neighborhood
+					'neighborhood':self.neighborhood,
+					'daysSince':self.daysSince
 				})
 
 ## Recursive function that combines getResults getListings
@@ -102,7 +105,11 @@ def getListings(url,ticker):
 			# Create apartment class instance from object
 			unit=apartment(i)
 			# Save to SQLDB
-
+			# If you find it then update with today minus the day posted. Else add new row.
+#			if unit.hashedTitle in hashList:
+#				unit.daysSince=
+#			else:
+#				unit.saveToDB()
 			unit.saveToDB()
 
 def point_inside_polygon(x,y,poly):
