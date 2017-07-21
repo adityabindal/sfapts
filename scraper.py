@@ -27,6 +27,7 @@ import scraperwiki
 import requests
 import sqlite3
 import re
+import hashlib
 from time import sleep
 import time
 from random import randint
@@ -54,9 +55,9 @@ class apartment(object):
 		self.url=obj['PostingURL']
 		self.postingID=obj['PostingID']
 		self.postingDate=obj['PostedDate']
-		self.hashedTitle=hash(self.title)
 		self.timeStamp=time.strftime('%Y-%m-%d %H:%M:%S')
 		self.neighborhood=get_neighborhood_for_point(self.latitude,self.longitude,poly)
+		self.hashedTitle=hashlib.md5(self.title+self.price+self.neighborhood+self.url).hexdigest()	
 	def saveToDB(self):
 		scraperwiki.sqlite.save(
 			unique_keys=['postingID','hashedTitle','timeStamp'],
@@ -101,6 +102,7 @@ def getListings(url,ticker):
 			# Create apartment class instance from object
 			unit=apartment(i)
 			# Save to SQLDB
+
 			unit.saveToDB()
 
 def point_inside_polygon(x,y,poly):
@@ -134,6 +136,11 @@ def get_neighborhood_for_point(lat, lng, commareas):
             return neighborhood['properties']['name']
 
 
-if int(time.strftime('%d'))%3==0:
+if int(time.strftime('%d'))%1==0:
+	# Generate hash list
+#	conn=sqlite3.connect('./_sfapts/20170720.sqlite', timeout=10000.0)
+#	c=conn.cursor()
+#	hashList=c.execute('''SELECT distinct hashedTitle from data''').fetchall()
+	# (I was trying to create the ability to )
 	poly=geojson.loads(open('SF Find Neighborhoods.geojson').read())['features']
 	getListings(base_url+start_url,ticker)
