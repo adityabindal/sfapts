@@ -80,7 +80,7 @@ class apartment(object):
 				})
 	def inFilter(self):
 		filterNeighborhoods=['Russian Hill','Pacific Heights','Lower Pacific Heights','Telegraph Hill']
-		if unit.neighborhood in filterNeighborhoods and unit.price < 5000 and unit.bedrooms >0 and unit.bedrooms<3 and unit.price>2000:
+		if self.neighborhood in filterNeighborhoods and self.price < 5000 and self.bedrooms >0 and self.bedrooms<3 and self.price>2000:
 			return True
 		else:
 			return False
