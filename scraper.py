@@ -35,6 +35,7 @@ import json
 import os
 import geojson
 import datetime
+from slackclient import SlackClient
 from bs4 import BeautifulSoup
 
 # Environment Variables
@@ -104,7 +105,16 @@ def getListings(url,ticker):
 #			print i
 			# Create apartment class instance from object
 			unit=apartment(i)
-			unit.saveToDB()
+			if unit.hashedTitle in hashList:
+				unit.saveToDB()
+			else:
+				# Send to AuntAgatha
+				desc = "{0} | {1} | {2} | <{3}>".format(unit.neighborhood, unit.price, unit.title, unit.url)
+				sc.api_call(
+				    "chat.postMessage", channel=SLACK_CHANNEL, text=desc,
+				    username='auntagatha', icon_emoji=':robot_face:'
+				)
+				unit.saveToDB()
 
 def point_inside_polygon(x,y,poly):
     """Return True if the point described by x, y is inside of the polygon
@@ -138,5 +148,14 @@ def get_neighborhood_for_point(lat, lng, commareas):
 
 
 if int(time.strftime('%d'))%1==0:
+	morph_api_url = "https://api.morph.io/abgtrevize/sfapts/data.json"
+	morph_api_key = os.environ['MORPH_API_KEY']
+	hashList = requests.get(morph_api_url, params={
+		'key': morph_api_key,
+		'query': "select distinct hashedTitle from data;"
+		}).content	
+	SLACK_TOKEN = os.environ('MORPH_SLACK_TOKEN')
+	SLACK_CHANNEL = "#auntagatha"
+	sc = SlackClient(SLACK_TOKEN)
 	poly=geojson.loads(open('SF Find Neighborhoods.geojson').read())['features']
 	getListings(base_url+start_url,ticker)
