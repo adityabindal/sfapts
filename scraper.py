@@ -116,6 +116,11 @@ def getListings(url,ticker):
 			else:
 				# Send to AuntAgatha
 				unit.saveToDB()
+				global hashList
+				hashList = requests.get(morph_api_url, params={
+					'key': morph_api_key,
+					'query': "select distinct hashedTitle from data;"
+					}).content	
 				if unit.inFilter():
 					desc = "{0} | {1} | {2} | <{3}>".format(str(unit.neighborhood), unit.price, unit.title.encode('utf-8'), unit.url)	
 					sc.api_call(
