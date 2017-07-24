@@ -154,7 +154,7 @@ if int(time.strftime('%d'))%1==0:
 		'key': morph_api_key,
 		'query': "select distinct hashedTitle from data;"
 		}).content	
-	SLACK_TOKEN = os.environ('MORPH_SLACK_TOKEN')
+	SLACK_TOKEN = os.environ['MORPH_SLACK_TOKEN']
 	SLACK_CHANNEL = "#auntagatha"
 	sc = SlackClient(SLACK_TOKEN)
 	poly=geojson.loads(open('SF Find Neighborhoods.geojson').read())['features']
