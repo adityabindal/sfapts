@@ -112,7 +112,7 @@ def getListings(url,ticker):
 		else:
 #			print i
 			# Create apartment class instance from object
-			unit=apartment(i))
+			unit=apartment(i)
 			if unit.hashedTitle in hashList or tempHashList:
 				unit.saveToDB()
 			else:
