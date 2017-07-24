@@ -109,7 +109,7 @@ def getListings(url,ticker):
 				unit.saveToDB()
 			else:
 				# Send to AuntAgatha
-				desc = "{0} | {1} | {2} | <{3}>".format(unit.neighborhood, unit.price, unit.title, unit.url)
+				desc = "{0} | {1} | {2} | <{3}>".format(str(unit.neighborhood).encode('utf-8'), str(unit.price).encode('utf-8'), str(unit.title).encode('utf-8'), str(unit.url).encode('utf-8'))
 				sc.api_call(
 				    "chat.postMessage", channel=SLACK_CHANNEL, text=desc,
 				    username='auntagatha', icon_emoji=':robot_face:'
