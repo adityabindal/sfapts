@@ -44,6 +44,8 @@ start_url='s=120&map=1'
 ticker=0
 os.environ['TZ']='US/Central'
 time.tzset()
+global tempHashList
+tempHashList=[]
 
 # Apartment Class
 class apartment(object):
@@ -87,12 +89,6 @@ class apartment(object):
 
 ## Recursive function that combines getResults getListings
 def getListings(url,ticker):
-	morph_api_url = "https://api.morph.io/abgtrevize/sfapts/data.json"
-	morph_api_key = os.environ['MORPH_API_KEY']
-	hashList = requests.get(morph_api_url, params={
-		'key': morph_api_key,
-		'query': "select distinct hashedTitle from data;"
-		}).content	
 	time.sleep(1)
 	sess=requests.Session()
 	sess.headers['User-Agent']='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36'
@@ -116,12 +112,14 @@ def getListings(url,ticker):
 		else:
 #			print i
 			# Create apartment class instance from object
-			unit=apartment(i)
-			if unit.hashedTitle in hashList:
+			unit=apartment(i))
+			if unit.hashedTitle in hashList or tempHashList:
 				unit.saveToDB()
 			else:
 				# Send to AuntAgatha
 				unit.saveToDB()
+				global tempHashList
+				tempHashList.append(unit.hashedTitle)				
 				if unit.inFilter():
 					desc = "{0} | {1} | {2} | <{3}>".format(str(unit.neighborhood), unit.price, unit.title.encode('utf-8'), unit.url)	
 					sc.api_call(
@@ -161,6 +159,12 @@ def get_neighborhood_for_point(lat, lng, commareas):
 
 
 if int(time.strftime('%d'))%1==0:
+	morph_api_url = "https://api.morph.io/abgtrevize/sfapts/data.json"
+	morph_api_key = os.environ['MORPH_API_KEY']
+	hashList = requests.get(morph_api_url, params={
+		'key': morph_api_key,
+		'query': "select distinct hashedTitle from data;"
+		}).content	
 	SLACK_TOKEN = os.environ['MORPH_SLACK_TOKEN']
 	SLACK_CHANNEL = "#auntagatha"
 	sc = SlackClient(SLACK_TOKEN)
