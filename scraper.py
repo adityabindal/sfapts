@@ -78,6 +78,12 @@ class apartment(object):
 					'neighborhood':self.neighborhood,
 					'daysSince':self.daysSince
 				})
+	def inFilter(self):
+		filterNeighborhoods=['Russian Hill','Pacific Heights','Lower Pacific Heights','Telegraph Hill']
+		if unit.neighborhood in filterNeighborhoods and unit.price < 5000 and unit.bedrooms >0 and unit.bedrooms<3 and unit.price>2000:
+			return True
+		else:
+			return False
 
 ## Recursive function that combines getResults getListings
 def getListings(url,ticker):
@@ -109,12 +115,13 @@ def getListings(url,ticker):
 				unit.saveToDB()
 			else:
 				# Send to AuntAgatha
-				desc = "{0} | {1} | {2} | <{3}>".format(str(unit.neighborhood), unit.price, unit.title.encode('utf-8'), unit.url)	
-				sc.api_call(
-				    "chat.postMessage", channel=SLACK_CHANNEL, text=desc,
-				    username='auntagatha', icon_emoji=':robot_face:'
-				)
 				unit.saveToDB()
+				if unit.inFilter():
+					desc = "{0} | {1} | {2} | <{3}>".format(str(unit.neighborhood), unit.price, unit.title.encode('utf-8'), unit.url)	
+					sc.api_call(
+					    "chat.postMessage", channel=SLACK_CHANNEL, text=desc,
+					    username='auntagatha', icon_emoji=':older_woman:'
+					)
 
 def point_inside_polygon(x,y,poly):
     """Return True if the point described by x, y is inside of the polygon
