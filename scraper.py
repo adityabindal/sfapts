@@ -103,14 +103,10 @@ def getListings(url,ticker):
 		pass
 	else:
 		sys.exit()
-#	print response.reason
 	for i in response.json()[0]:
-#		print i
 		if 'GeoCluster' in i.keys():
 			getListings(base_url+i['url'],ticker)			
 		else:
-#			print i
-			# Create apartment class instance from object
 			unit=apartment(i)
 			unit.saveToDB()
 #			if any(z['hashedTitle']!=unit.hashedTitle for z in hashList):
