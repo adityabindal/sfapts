@@ -112,10 +112,8 @@ def getListings(url,ticker):
 #			print i
 			# Create apartment class instance from object
 			unit=apartment(i)
-			if any(z['hashedTitle']==unit.hashedTitle for z in hashList):
-				unit.saveToDB()
-			else:
-				# Send to AuntAgatha
+			unit.saveToDB()
+			if any(z['hashedTitle']!=unit.hashedTitle for z in hashList):
 				unit.saveToDB()
 				if unit.inFilter():
 					desc = "{0} | {1} | {2} | <{3}>".format(str(unit.neighborhood), unit.price, unit.title.encode('utf-8'), unit.url)	
