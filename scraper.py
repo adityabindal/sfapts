@@ -93,7 +93,7 @@ def getListings(url,ticker):
 	adapter=requests.adapters.HTTPAdapter(max_retries=100)
 	sess.mount('http://',adapter)	
 	response=sess.get(url)
-	hashList = scraperwiki.sqlite.select('distinct hashedTitle from data')
+#	hashList = scraperwiki.sqlite.select('distinct hashedTitle from data')
 	if response.ok:
 		pass
 	elif ticker<10:
@@ -113,10 +113,9 @@ def getListings(url,ticker):
 			# Create apartment class instance from object
 			unit=apartment(i)
 			unit.saveToDB()
-			if any(z['hashedTitle']!=unit.hashedTitle for z in hashList):
-				unit.saveToDB()
-				if unit.inFilter():
-					desc = "{0} | {1} | {2} | <{3}>".format(str(unit.neighborhood), unit.price, unit.title.encode('utf-8'), unit.url)	
+#			if any(z['hashedTitle']!=unit.hashedTitle for z in hashList):
+#				if unit.inFilter():
+#					desc = "{0} | {1} | {2} | <{3}>".format(str(unit.neighborhood), unit.price, unit.title.encode('utf-8'), unit.url)	
 	#				sc.api_call(
 	#				    "chat.postMessage", channel=SLACK_CHANNEL, text=desc,
 	#				    username='auntagatha', icon_emoji=':older_woman:'
