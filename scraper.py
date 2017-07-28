@@ -1,42 +1,11 @@
-# This is a template for a Python scraper on morph.io (https://morph.io)
-# including some code snippets below that you should find helpful
-
-# import scraperwiki
-# import lxml.html
-#
-# # Read in a page
-# html = scraperwiki.scrape("http://foo.com")
-#
-# # Find something on the page using css selectors
-# root = lxml.html.fromstring(html)
-# root.cssselect("div[align='left']")
-#
-# # Write out to the sqlite database using scraperwiki library
-# scraperwiki.sqlite.save(unique_keys=['name'], data={"name": "susan", "occupation": "software developer"})
-#
-# # An arbitrary query against the database
-# scraperwiki.sql.select("* from data where 'name'='peter'")
-
-# You don't have to do things with the ScraperWiki and lxml libraries.
-# You can use whatever libraries you want: https://morph.io/documentation/python
-# All that matters is that your final data is written to an SQLite database
-# called "data.sqlite" in the current working directory which has at least a table
-# called "data".
-
 import scraperwiki
 import requests
-import sqlite3
-import re
 import hashlib
-from time import sleep
 import time
-from random import randint
-import json
 import os
 import geojson
 import datetime
 from slackclient import SlackClient
-from bs4 import BeautifulSoup
 
 # Environment Variables
 base_url='https://sfbay.craigslist.org/jsonsearch/apa/sfc/?'
@@ -61,6 +30,12 @@ class apartment(object):
 		self.neighborhood=get_neighborhood_for_point(self.latitude,self.longitude,poly)
 		self.hashedTitle=hashlib.md5(str((self.title).encode('utf-8'))+str(self.price)+str(self.neighborhood)).hexdigest()	
 		self.daysSince=(datetime.datetime.now()-datetime.datetime.fromtimestamp(self.postingDate)).days
+	def inFilter(self):
+		filterNeighborhoods=['Russian Hill','Pacific Heights','Lower Pacific Heights','Telegraph Hill']
+		if self.neighborhood in filterNeighborhoods and self.price < 5000 and self.bedrooms >0 and self.bedrooms<3 and self.price>2000:
+			return True
+		else:
+			return False
 	def saveToDB(self):
 		scraperwiki.sqlite.save(
 			unique_keys=['hashedTitle'],
@@ -78,12 +53,6 @@ class apartment(object):
 					'neighborhood':self.neighborhood,
 					'daysSince':self.daysSince
 				})
-	def inFilter(self):
-		filterNeighborhoods=['Russian Hill','Pacific Heights','Lower Pacific Heights','Telegraph Hill']
-		if self.neighborhood in filterNeighborhoods and self.price < 5000 and self.bedrooms >0 and self.bedrooms<3 and self.price>2000:
-			return True
-		else:
-			return False
 
 ## Recursive function that combines getResults getListings
 def getListings(url,ticker):
@@ -109,13 +78,12 @@ def getListings(url,ticker):
 		else:
 			unit=apartment(i)
 			unit.saveToDB()
-#			if any(z['hashedTitle']!=unit.hashedTitle for z in hashList):
-#				if unit.inFilter():
-#					desc = "{0} | {1} | {2} | <{3}>".format(str(unit.neighborhood), unit.price, unit.title.encode('utf-8'), unit.url)	
-	#				sc.api_call(
-	#				    "chat.postMessage", channel=SLACK_CHANNEL, text=desc,
-	#				    username='auntagatha', icon_emoji=':older_woman:'
-	#				)
+			if any(z['hashedTitle']!=unit.hashedTitle for z in hashList) and unit.inFilter():
+				desc = "{0} | {1} | {2} | <{3}>".format(str(unit.neighborhood), unit.price, unit.title.encode('utf-8'), unit.url)	
+				sc.api_call(
+				    "chat.postMessage", channel=SLACK_CHANNEL, text=desc,
+				    username='auntagatha', icon_emoji=':older_woman:'
+				)
 
 def point_inside_polygon(x,y,poly):
     """Return True if the point described by x, y is inside of the polygon
