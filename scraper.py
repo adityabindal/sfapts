@@ -121,4 +121,4 @@ if int(time.strftime('%d'))%1==0:
 	SLACK_CHANNEL = "#auntagatha"
 	sc = SlackClient(SLACK_TOKEN)
 	poly=geojson.loads(open('SF Find Neighborhoods.geojson').read())['features']
-	getListings(base_url+start_url,ticker,hashList)
+	getListings(base_url+start_url,ticker)
