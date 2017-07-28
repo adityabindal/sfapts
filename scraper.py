@@ -8,8 +8,8 @@ import datetime
 from slackclient import SlackClient
 
 # Environment Variables
-base_url='https://sfbay.craigslist.org/jsonsearch/apa/sfc/?'
-start_url='s=120&map=1'
+base_url='https://sfbay.craigslist.org'
+start_url='/jsonsearch/apa/sfc/?s=120&map=1'
 ticker=0
 os.environ['TZ']='US/Central'
 time.tzset()
@@ -62,7 +62,6 @@ def getListings(url,ticker):
 	adapter=requests.adapters.HTTPAdapter(max_retries=100)
 	sess.mount('http://',adapter)	
 	response=sess.get(url)
-	hashList = scraperwiki.sqlite.select('distinct hashedTitle from data')
 	if response.ok:
 		pass
 	elif ticker<10:
@@ -122,4 +121,4 @@ if int(time.strftime('%d'))%1==0:
 	SLACK_CHANNEL = "#auntagatha"
 	sc = SlackClient(SLACK_TOKEN)
 	poly=geojson.loads(open('SF Find Neighborhoods.geojson').read())['features']
-	getListings(base_url+start_url,ticker)
+	getListings(base_url+start_url,ticker,hashList)
