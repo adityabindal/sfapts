@@ -62,7 +62,7 @@ def getListings(url,ticker):
 	adapter=requests.adapters.HTTPAdapter(max_retries=100)
 	sess.mount('http://',adapter)	
 	response=sess.get(url)
-#	hashList = scraperwiki.sqlite.select('distinct hashedTitle from data')
+	hashList = scraperwiki.sqlite.select('distinct hashedTitle from data')
 	if response.ok:
 		pass
 	elif ticker<10:
