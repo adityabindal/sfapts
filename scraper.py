@@ -62,7 +62,6 @@ def getListings(url,ticker):
 	adapter=requests.adapters.HTTPAdapter(max_retries=100)
 	sess.mount('http://',adapter)	
 	response=sess.get(url)
-	hashList = scraperwiki.sqlite.select('distinct hashedTitle from data')
 	if response.ok:
 		pass
 	elif ticker<10:
@@ -76,6 +75,7 @@ def getListings(url,ticker):
 		if 'GeoCluster' in i.keys():
 			getListings(base_url+i['url'],ticker)			
 		else:
+			hashList = scraperwiki.sqlite.select('distinct hashedTitle from data')
 			unit=apartment(i)
 			unit.saveToDB()
 			if any(z['hashedTitle']!=unit.hashedTitle for z in hashList) and unit.inFilter():
