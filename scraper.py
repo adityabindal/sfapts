@@ -80,11 +80,10 @@ def getListings(url,ticker):
 			unit.saveToDB()
 			if all(z['hashedTitle']!=unit.hashedTitle for z in hashList) and unit.inFilter():
 				desc = "{0} | {1} | {2} | <{3}>".format(str(unit.neighborhood), unit.price, unit.title.encode('utf-8'), unit.url)	
-				print desc
-#				sc.api_call(
-#				    "chat.postMessage", channel=SLACK_CHANNEL, text=desc,
-#				    username='auntagatha', icon_emoji=':older_woman:'
-#				)
+				sc.api_call(
+				    "chat.postMessage", channel=SLACK_CHANNEL, text=desc,
+				    username='auntagatha', icon_emoji=':older_woman:'
+				)
 
 def point_inside_polygon(x,y,poly):
     """Return True if the point described by x, y is inside of the polygon
