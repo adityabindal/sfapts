@@ -77,8 +77,8 @@ def getListings(url,ticker):
 		else:
 			hashList = scraperwiki.sqlite.select('distinct hashedTitle from data')
 			unit=apartment(i)
-			unit.saveToDB()
 			if all(z['hashedTitle']!=unit.hashedTitle for z in hashList) and unit.inFilter():
+				unit.saveToDB()
 				desc = "{0} | {1} | {2} | <{3}>".format(str(unit.neighborhood), unit.price, unit.title.encode('utf-8'), unit.url)	
 				sc.api_call(
 				    "chat.postMessage", channel=SLACK_CHANNEL, text=desc,
