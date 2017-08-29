@@ -91,19 +91,18 @@ def processListings(listings):
 	newListings = [x for x in apartments if x.hashedTitle not in hashList]
 	status = "New Listings: {0}. Of Interest: {1}".format(str(len(newListings)),str(len([x for x in newListings if x.inFilter()])))
 	print status
-#	sc.api_call(
-#		"chat.postMessage", channel=SLACK_CHANNEL, text=status,
-#		username='auntagatha', icon_emoji=':older_woman:'
-#	)
+	sc.api_call(
+		"chat.postMessage", channel=SLACK_CHANNEL, text=status,
+		username='auntagatha', icon_emoji=':older_woman:'
+	)
 	for unit in newListings:
 		unit.saveToDB()
 		if unit.inFilter():
 			desc = "{0} | {1} | {2} | <{3}>".format(str(unit.neighborhood), unit.price, unit.title.encode('utf-8'), unit.url)	
-			print desc
-#			sc.api_call(
-#			    "chat.postMessage", channel=SLACK_CHANNEL, text=desc,
-#			    username='auntagatha', icon_emoji=':older_woman:'
-#			)
+			sc.api_call(
+			    "chat.postMessage", channel=SLACK_CHANNEL, text=desc,
+			    username='auntagatha', icon_emoji=':older_woman:'
+			)
 
 def point_inside_polygon(x,y,poly):
     """Return True if the point described by x, y is inside of the polygon
