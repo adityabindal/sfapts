@@ -16,7 +16,8 @@ time.tzset()
 
 # Apartment Class
 class apartment(object):
-	"""Apartment class that parses Craigslist json"""
+	"""Apartment class that parses Craigslist json.
+		Create Instance with apartment(dict)"""
 	def __init__(self, obj):
 		self.bedrooms=obj['Bedrooms']
 		self.price=obj['Ask']
@@ -56,7 +57,6 @@ class apartment(object):
 
 ## Recursive function that combines getResults getListings
 def getListings(url,ticker):
-	time.sleep(1)
 	sess=requests.Session()
 	sess.headers['User-Agent']='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36'
 	adapter=requests.adapters.HTTPAdapter(max_retries=100)
@@ -71,19 +71,39 @@ def getListings(url,ticker):
 		pass
 	else:
 		sys.exit()
-	for i in response.json()[0]:
-		if 'GeoCluster' in i.keys():
-			getListings(base_url+i['url'],ticker)			
-		else:
-			hashList = scraperwiki.sqlite.select('distinct hashedTitle from data')
-			unit=apartment(i)
-			if all(z['hashedTitle']!=unit.hashedTitle for z in hashList) and unit.inFilter():
-				unit.saveToDB()
-				desc = "{0} | {1} | {2} | <{3}>".format(str(unit.neighborhood), unit.price, unit.title.encode('utf-8'), unit.url)	
-				sc.api_call(
-				    "chat.postMessage", channel=SLACK_CHANNEL, text=desc,
-				    username='auntagatha', icon_emoji=':older_woman:'
-				)
+	listings=[]
+	items=[x for x in response.json()[0] if 'GeoCluster' not in  x.keys()]
+	listings.extend(items)
+	try:
+		clusters=[x for x in response.json()[0] if 'GeoCluster' in  x.keys()]
+		for cluster in clusters:
+			getListings(base_url+cluster['url'],0)
+	except:
+		pass
+	return listings
+
+def processListings(listings):
+	dupKey = ["PostingID"]
+	filtered = {tuple((k, d[k]) for k in sorted(d) if k in dupKey): d for d in listings}
+	noDupListings = list(filtered.values())
+	apartments = [apartment(apt) for apt in noDupListings]		
+	hashList = [x['hashedTitle'] for x in scraperwiki.sqlite.select('distinct hashedTitle from data')]
+	newListings = [x for x in apartments if x.hashedTitle not in hashList]
+	status = "New Listings: {0}. Of Interest: {1}".format(str(len(newListings)),str(len([x for x in newListings if x.inFilter()])))
+	print status
+#	sc.api_call(
+#		"chat.postMessage", channel=SLACK_CHANNEL, text=status,
+#		username='auntagatha', icon_emoji=':older_woman:'
+#	)
+	for unit in newListings:
+		unit.saveToDB()
+		if unit.inFilter():
+			desc = "{0} | {1} | {2} | <{3}>".format(str(unit.neighborhood), unit.price, unit.title.encode('utf-8'), unit.url)	
+			print desc
+#			sc.api_call(
+#			    "chat.postMessage", channel=SLACK_CHANNEL, text=desc,
+#			    username='auntagatha', icon_emoji=':older_woman:'
+#			)
 
 def point_inside_polygon(x,y,poly):
     """Return True if the point described by x, y is inside of the polygon
@@ -121,4 +141,5 @@ if int(time.strftime('%d'))%1==0:
 	SLACK_CHANNEL = "#auntagatha"
 	sc = SlackClient(SLACK_TOKEN)
 	poly=geojson.loads(open('SF Find Neighborhoods.geojson').read())['features']
-	getListings(base_url+start_url,ticker)
+	listings=getListings(base_url+start_url,ticker)
+	processListings(listings)
