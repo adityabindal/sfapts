@@ -32,7 +32,7 @@ class apartment(object):
 		self.hashedTitle=hashlib.md5(str((self.title).encode('utf-8'))+str(self.price)+str(self.neighborhood)).hexdigest()	
 		self.daysSince=(datetime.datetime.now()-datetime.datetime.fromtimestamp(self.postingDate)).days
 	def inFilter(self):
-		filterNeighborhoods=['Russian Hill','Pacific Heights','Lower Pacific Heights','Telegraph Hill','Japantown','Hayes Valley','Duboce Triangle','Mission Dolores']
+		filterNeighborhoods=['Russian Hill','Pacific Heights','Lower Pacific Heights','Telegraph Hill','Japantown','Hayes Valley','Duboce Triangle','Mission Dolores','Northern Waterfront','Nob Hill']
 		if self.neighborhood in filterNeighborhoods and self.price < 5000 and self.bedrooms >0 and self.bedrooms<3 and self.price>2000:
 			return True
 		else:
