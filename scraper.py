@@ -39,6 +39,7 @@ class apartment(object):
 			return False
 	def saveToDB(self):
 		scraperwiki.sqlite.save(
+			table_name='data',
 			unique_keys=['hashedTitle'],
 			data={
 					'bedrooms':self.bedrooms,
