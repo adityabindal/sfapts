@@ -13,6 +13,7 @@ start_url='/jsonsearch/apa/sfc/?s=120&map=1'
 ticker=0
 os.environ['TZ']='US/Central'
 time.tzset()
+#Neighborhood definitions - https://data.sfgov.org/Geographic-Locations-and-Boundaries/SF-Find-Neighborhoods/pty2-tcw4
 
 # Apartment Class
 class apartment(object):
@@ -32,8 +33,8 @@ class apartment(object):
 		self.hashedTitle=hashlib.md5(str((self.title).encode('utf-8'))+str(self.price)+str(self.neighborhood)).hexdigest()	
 		self.daysSince=(datetime.datetime.now()-datetime.datetime.fromtimestamp(self.postingDate)).days
 	def inFilter(self):
-		filterNeighborhoods=['Russian Hill','Pacific Heights','Lower Pacific Heights','Telegraph Hill','Japantown','Hayes Valley','Duboce Triangle','Mission Dolores','Northern Waterfront','Nob Hill']
-		if self.neighborhood in filterNeighborhoods and self.price < 5000 and self.bedrooms >0 and self.bedrooms<3 and self.price>2000:
+		filterNeighborhoods=['Russian Hill','Pacific Heights','Lower Pacific Heights','Presidio Heights','Laurel Heights / Jordan Park','Presidio Terrace']
+		if self.neighborhood in filterNeighborhoods and self.price < 3800 and self.bedrooms >0 and self.bedrooms<3 and self.price>2000:
 			return True
 		else:
 			return False
