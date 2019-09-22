@@ -37,7 +37,7 @@ class apartment(object):
 			'Dogpatch','Central Waterfront', 'Showplace Square', 'Mission Bay', 'Bernal Heights',' Potrero Hill', 'Peralta Heights', 'Midtown Terrace',
 			'Forest Knolls','Sherwood Forest','St. Francis Wood','Miraloma Park'
 		]
-		if self.neighborhood in filterNeighborhoods and self.price < 6800 and self.bedrooms >1 and self.bedrooms<5 and self.price>2500:
+		if self.neighborhood in filterNeighborhoods and self.price < 6800 and self.bedrooms >2 and self.bedrooms<6 and self.price>2900:
 			return True
 		else:
 			return False
