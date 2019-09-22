@@ -34,9 +34,10 @@ class apartment(object):
 		self.daysSince=(datetime.datetime.now()-datetime.datetime.fromtimestamp(self.postingDate)).days
 	def inFilter(self):
 		filterNeighborhoods=['Russian Hill','Pacific Heights','Lower Pacific Heights','Presidio Heights','Laurel Heights / Jordan Park','Presidio Terrace',
-			'Dogpatch','Central Waterfront', 'Showplace Square', 'Mission Bay', 'Bernal Heights',' Potrero Hill', 'Peralta Heights'
+			'Dogpatch','Central Waterfront', 'Showplace Square', 'Mission Bay', 'Bernal Heights',' Potrero Hill', 'Peralta Heights', 'Midtown Terrace',
+			'Forest Knolls','Sherwood Forest','St. Francis Wood','Miraloma Park'
 		]
-		if self.neighborhood in filterNeighborhoods and self.price < 5200 and self.bedrooms >0 and self.bedrooms<4 and self.price>2500:
+		if self.neighborhood in filterNeighborhoods and self.price < 6800 and self.bedrooms >1 and self.bedrooms<5 and self.price>2500:
 			return True
 		else:
 			return False
