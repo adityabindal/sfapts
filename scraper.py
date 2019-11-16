@@ -35,7 +35,7 @@ class apartment(object):
 	def inFilter(self):
 		filterNeighborhoods=['Russian Hill','Pacific Heights','Lower Pacific Heights','Presidio Heights','Laurel Heights / Jordan Park','Presidio Terrace',
 			'Dogpatch','Central Waterfront', 'Showplace Square', 'Mission Bay', 'Bernal Heights',' Potrero Hill', 'Peralta Heights', 'Midtown Terrace',
-			'Forest Knolls','Sherwood Forest','St. Francis Wood','Miraloma Park'
+			'Forest Knolls','Sherwood Forest','St. Francis Wood','Miraloma Park', 'Noe Valley'
 		]
 		if self.neighborhood in filterNeighborhoods and self.price < 6800 and self.bedrooms >2 and self.bedrooms<6 and self.price>2900:
 			return True
